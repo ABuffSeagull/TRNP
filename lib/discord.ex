@@ -1,10 +1,17 @@
 defmodule Discord do
+  @moduledoc """
+  Discord module for handling events and
+  dispatching the correct commands
+  """
+
   use Nostrum.Consumer
-  require Logger
+
   alias Nostrum.Struct.Message
   alias Nostrum.Struct.Guild
   alias Nostrum.Api
   alias Nostrum.Cache
+
+  require Logger
 
   @guild_id Application.fetch_env!(:trnp, :guild_id)
 

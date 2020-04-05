@@ -1,4 +1,8 @@
 defmodule Trnp do
+  @moduledoc """
+  A simple Application for the TRNP bot
+  """
+
   use Application
 
   def start(_type, _args) do
