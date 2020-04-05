@@ -1,18 +1,11 @@
 defmodule Trnp do
-  @moduledoc """
-  Documentation for `Trnp`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    children = [
+      Discord
+    ]
 
-  ## Examples
-
-      iex> Trnp.hello()
-      :world
-
-  """
-  def hello do
-    :world
+    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end
