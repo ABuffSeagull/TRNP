@@ -6,16 +6,18 @@ defmodule Discord do
 
   use Nostrum.Consumer
 
-  alias Nostrum.Struct.Message
-  alias Nostrum.Struct.Guild
   alias Nostrum.Api
   alias Nostrum.Cache
+  alias Nostrum.Struct.Guild
+  alias Nostrum.Struct.Guild.Member
+  alias Nostrum.Struct.Message
 
   require Logger
 
+  @bot_id Application.fetch_env!(:trnp, :bot_id)
   @guild_id Application.fetch_env!(:trnp, :guild_id)
-
   @role_message_id Application.fetch_env!(:trnp, :role_message_id)
+  @selling_channel_id Application.fetch_env!(:trnp, :selling_channel_id)
 
   def start_link do
     Consumer.start_link(__MODULE__, name: Discord)
@@ -27,7 +29,7 @@ defmodule Discord do
         {:MESSAGE_REACTION_ADD,
          %{user_id: user_id, message_id: @role_message_id, emoji: %{name: emoji}}, _ws_state}
       ) do
-    %Guild{members: %{^user_id => %{roles: roles}}} = Cache.GuildCache.get!(@guild_id)
+    %Guild{members: %{^user_id => %Member{roles: roles}}} = Cache.GuildCache.get!(@guild_id)
 
     role_a = Application.fetch_env!(:trnp, :role_a_id)
     role_b = Application.fetch_env!(:trnp, :role_b_id)
@@ -44,7 +46,20 @@ defmodule Discord do
     Api.modify_guild_member!(@guild_id, user_id, roles: roles)
   end
 
-  def handle_event(event) do
+  # Ignore all messages from self
+  def handle_event({:MESSAGE_CREATE, %Message{author: %{id: @bot_id}}, _ws_state}), do: nil
+
+  # when author_id != 696_117_361_044_095_126 do
+  def handle_event(
+        {:MESSAGE_CREATE,
+         %Message{
+           channel_id: @selling_channel_id
+         } = message, _ws_state}
+      ) do
+    Trnp.Buying.update(message)
+  end
+
+  def handle_event(_event) do
     # IO.inspect(event, label: "Unhandled event")
   end
 end

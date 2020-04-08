@@ -7,7 +7,8 @@ defmodule Trnp do
 
   def start(_type, _args) do
     children = [
-      Discord
+      Discord,
+      {Trnp.Buying, []}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
