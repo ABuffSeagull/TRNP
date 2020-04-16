@@ -15,18 +15,18 @@ defmodule Trnp.MixProject do
   def application do
     [
       mod: {Trnp, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :timex]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:timex, "~> 3.6"},
       {:nostrum, "~> 0.4.1"},
-      {:quantum, "~> 2.4"},
-      {:credo, "~> 1.3", only: [:dev, :test], runtime: false}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:quantum, "~> 3.0.0-rc.3"},
+      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 end
