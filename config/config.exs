@@ -5,7 +5,7 @@ config :logger,
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
-config :trnp, Scheduler.Quantum,
+config :trnp, Scheduler,
   jobs: [
     channel_remake: [
       schedule: "0 0 * * *",
