@@ -41,3 +41,5 @@ erl_crash.dump
 ### Elixir Patch ###
 
 # End of https://www.gitignore.io/api/elixir
+
+deploy.sh
