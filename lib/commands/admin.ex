@@ -12,6 +12,8 @@ defmodule Commands.Admin do
         |> String.to_integer()
         |> Trnp.Selling.set_channel_id()
 
+        Api.create_message!(@admin_channel_id, "Channel set")
+
       _ ->
         nil
     end
