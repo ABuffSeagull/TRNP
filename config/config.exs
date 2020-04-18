@@ -8,7 +8,7 @@ config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 config :trnp, Scheduler,
   jobs: [
     channel_remake: [
-      schedule: "0 0 * * *",
+      schedule: "@weekly",
       task: {Trnp.Selling, :clean_channel, []},
       timezone: "America/Los_Angeles"
     ]
