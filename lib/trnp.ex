@@ -9,6 +9,7 @@ defmodule Trnp do
     children = [
       Discord,
       Trnp.Selling,
+      Trnp.Timezones,
       Scheduler
     ]
 
