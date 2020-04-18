@@ -43,3 +43,4 @@ erl_crash.dump
 # End of https://www.gitignore.io/api/elixir
 
 deploy.sh
+user_tz.json

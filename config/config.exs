@@ -5,6 +5,9 @@ config :logger,
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+config :trnp,
+  tz_file_name: "user_tz.json"
+
 config :trnp, Scheduler,
   jobs: [
     channel_remake: [
