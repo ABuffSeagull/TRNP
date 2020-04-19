@@ -6,6 +6,7 @@ defmodule Trnp.Selling do
 
   alias Nostrum.Api
   alias Nostrum.Struct.Message
+  alias Nostrum.Struct.Channel
 
   @guild_id Application.fetch_env!(:trnp, :guild_id)
   @channel_parent_id Application.fetch_env!(:trnp, :channel_parent_id)
@@ -22,11 +23,18 @@ defmodule Trnp.Selling do
 
   ## Api
 
-  def set_channel_id(id), do: Agent.cast(__MODULE__, &%{&1 | channel_id: id})
+  def clean_channel do
+    channel_id = Database.get_channel_id("selling")
+    Api.delete_channel!(channel_id, "Weekly wipe")
 
-  def get_channel_id, do: Agent.get(__MODULE__, & &1.channel_id)
+    %Channel{id: channel_id} =
+      Api.create_guild_channel!(@guild_id,
+        name: "selling-prices",
+        parent_id: @channel_parent_id
+      )
 
-  def clean_channel, do: Agent.cast(__MODULE__, &remake_channel/1)
+    Database.set_channel_id("selling", channel_id)
+  end
 
   def get_history(id) do
     Agent.get(__MODULE__, fn %__MODULE__{user_ids: user_ids} ->
@@ -58,35 +66,6 @@ defmodule Trnp.Selling do
   end
 
   ## Agent callbacks
-
-  defp remake_channel(%__MODULE__{channel_id: nil} = state) do
-    Api.create_message!(@admin_channel_id,
-      content: "You forgot to set the selling channel id, dumbass"
-    )
-
-    state
-  end
-
-  defp remake_channel(%__MODULE__{channel_id: channel_id}) do
-    with {:ok, _channel} <- Api.delete_channel(channel_id, "Weekly wipe"),
-         {:ok, %{id: id}} <-
-           Api.create_guild_channel(@guild_id,
-             name: "selling-prices",
-             parent_id: @channel_parent_id
-           ) do
-      %__MODULE__{channel_id: id}
-    else
-      {:error, error} ->
-        %{response: %{message: message}, status_code: code} = error
-
-        Api.create_message!(
-          @admin_channel_id,
-          content: "Something went wrong with deleting the selling channel: #{code} #{message}"
-        )
-
-        %__MODULE__{}
-    end
-  end
 
   defp add_price(%__MODULE__{channel_id: channel_id, user_ids: user_ids} = state, %{
          user_id: user_id,

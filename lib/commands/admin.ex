@@ -6,17 +6,9 @@ defmodule Commands.Admin do
   def handle_command("set channel " <> command) do
     [channel, id] = String.split(command)
 
-    case channel do
-      "selling" ->
-        id
-        |> String.to_integer()
-        |> Trnp.Selling.set_channel_id()
+    Database.set_channel_id(channel, id)
 
-        Api.create_message!(@admin_channel_id, content: "Channel set")
-
-      _ ->
-        nil
-    end
+    Api.create_message!(@admin_channel_id, content: "Channel set")
   end
 
   def handle_command(command) do
