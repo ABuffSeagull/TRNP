@@ -27,9 +27,11 @@ defmodule Discord do
       ),
       do: Commands.Admin.handle_command(command)
 
+  # Handle User commands
   def handle_event({:MESSAGE_CREATE, %Message{content: "!" <> _command} = message, _ws_state}),
     do: Commands.User.handle_command(message)
 
+  # Handle general messages
   def handle_event({:MESSAGE_CREATE, %Message{channel_id: channel_id} = message, _ws_state}) do
     selling_channel_id = Trnp.Selling.get_channel_id()
 
