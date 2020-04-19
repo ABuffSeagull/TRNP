@@ -11,6 +11,8 @@ defmodule Trnp.Selling do
   @channel_parent_id Application.fetch_env!(:trnp, :channel_parent_id)
   @admin_channel_id Application.fetch_env!(:trnp, :admin_channel_id)
 
+  @empty_list Enum.map(0..11, fn _ -> nil end)
+
   ## Init
 
   defstruct channel_id: nil, user_ids: %{}
@@ -102,18 +104,19 @@ defmodule Trnp.Selling do
         state
 
       timezone ->
-        key =
+        datetime =
           timestamp
           |> Timex.parse!("{ISO:Extended}")
           |> Timezone.convert(timezone)
-          |> Timex.format!("{WDsun}_{am}")
 
-        price_map =
+        index = Timex.weekday(datetime) - 2 + if(datetime.hour < 12, do: 1, else: 0)
+
+        prices =
           user_ids
-          |> Map.get(user_id, %{})
-          |> Map.put(key, price)
+          |> Map.get(user_id, @empty_list)
+          |> List.insert_at(index, price)
 
-        user_ids = Map.put(user_ids, user_id, price_map)
+        user_ids = Map.put(user_ids, user_id, prices)
 
         Api.create_reaction!(channel_id, message_id, "✅")
 
