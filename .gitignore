@@ -44,3 +44,4 @@ erl_crash.dump
 
 deploy.sh
 user_tz.json
+trnp.db

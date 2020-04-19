@@ -7,9 +7,9 @@ defmodule Trnp do
 
   def start(_type, _args) do
     children = [
+      {Database, 'trnp.db'},
       Discord,
       Trnp.Selling,
-      Trnp.Timezones,
       Scheduler
     ]
 

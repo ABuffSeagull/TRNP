@@ -1,6 +1,7 @@
 defmodule Commands.User do
   alias Nostrum.Api
   alias Nostrum.Struct.Message
+  alias Timex.Timezone
 
   def handle_command(%Message{
         content: "!timezone" <> timezone,
@@ -11,15 +12,14 @@ defmodule Commands.User do
 
     message =
       if String.length(timezone) > 0 do
-        case Trnp.Timezones.set_user_timezone(user_id, timezone) do
-          :ok ->
-            "Timezone has been set to #{timezone}"
-
-          :error ->
-            "Timezone does not exist, please consult this: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+        if Timezone.exists?(timezone) do
+          Database.set_user_timezone(user_id, timezone)
+          "Timezone has been set to #{timezone}"
+        else
+          "Timezone does not exist, please consult this: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
         end
       else
-        case Trnp.Timezones.get_user_timezone(user_id) do
+        case Database.get_user_timezone(user_id) do
           nil -> "You haven't set a timezone yet"
           tz -> "Your timezone is #{tz}"
         end

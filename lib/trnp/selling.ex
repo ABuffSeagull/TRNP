@@ -94,7 +94,7 @@ defmodule Trnp.Selling do
          timestamp: timestamp,
          message_id: message_id
        }) do
-    case Trnp.Timezones.get_user_timezone(user_id) do
+    case Database.get_user_timezone(user_id) do
       nil ->
         Api.create_message(
           channel_id,
