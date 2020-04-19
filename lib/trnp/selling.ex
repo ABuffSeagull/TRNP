@@ -57,13 +57,16 @@ defmodule Trnp.Selling do
   ## Agent callbacks
 
   defp remake_channel(%__MODULE__{channel_id: nil} = state) do
-    Api.create_message!(@admin_channel_id, "You forgot to set the selling channel id, dumbass")
+    Api.create_message!(@admin_channel_id,
+      content: "You forgot to set the selling channel id, dumbass"
+    )
+
     state
   end
 
   defp remake_channel(%__MODULE__{channel_id: channel_id}) do
     with {:ok, _channel} <- Api.delete_channel(channel_id, "Weekly wipe"),
-         {:ok, %{channel_id: id}} <-
+         {:ok, %{id: id}} <-
            Api.create_guild_channel(@guild_id,
              name: "selling-prices",
              parent_id: @channel_parent_id
@@ -75,7 +78,7 @@ defmodule Trnp.Selling do
 
         Api.create_message!(
           @admin_channel_id,
-          "Something went wrong with deleting the selling channel: #{code} #{message}"
+          content: "Something went wrong with deleting the selling channel: #{code} #{message}"
         )
 
         %__MODULE__{}
@@ -92,7 +95,7 @@ defmodule Trnp.Selling do
       nil ->
         Api.create_message(
           channel_id,
-          "<@!#{user_id}> You haven't set your timezone yet. Use !timezone <timezone>"
+          content: "<@!#{user_id}> You haven't set your timezone yet. Use !timezone <timezone>"
         )
 
         state

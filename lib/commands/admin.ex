@@ -12,7 +12,7 @@ defmodule Commands.Admin do
         |> String.to_integer()
         |> Trnp.Selling.set_channel_id()
 
-        Api.create_message!(@admin_channel_id, "Channel set")
+        Api.create_message!(@admin_channel_id, content: "Channel set")
 
       _ ->
         nil
@@ -21,6 +21,6 @@ defmodule Commands.Admin do
 
   def handle_command(command) do
     command = String.split(command)
-    Api.create_message!(@admin_channel_id, "Unknown command: #{command}")
+    Api.create_message!(@admin_channel_id, content: "Unknown command: #{command}")
   end
 end

@@ -25,7 +25,7 @@ defmodule Commands.User do
         end
       end
 
-    Api.create_message!(channel_id, "<@!#{user_id}> #{message}")
+    Api.create_message!(channel_id, content: "<@!#{user_id}> #{message}")
   end
 
   def handle_command(%Message{
