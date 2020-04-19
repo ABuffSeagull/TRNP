@@ -28,7 +28,7 @@ defmodule Trnp.Selling do
   def clean_channel, do: Agent.cast(__MODULE__, &remake_channel/1)
 
   def get_history(id) do
-    Agent.get(__MODULE__, fn %__MODULE__{user_ids: user_ids} -> Map.get(user_ids, id, []) end)
+    Agent.get(__MODULE__, fn %__MODULE__{user_ids: user_ids} -> Map.get(user_ids, id, %{}) end)
   end
 
   def handle_message(%Message{
@@ -102,7 +102,7 @@ defmodule Trnp.Selling do
           timestamp
           |> Timex.parse!("{ISO:Extended}")
           |> Timezone.convert(timezone)
-          |> Timex.format!("{WDmon}_{am}")
+          |> Timex.format!("{WDsun}_{am}")
 
         price_map =
           user_ids
