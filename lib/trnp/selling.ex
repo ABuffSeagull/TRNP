@@ -20,15 +20,16 @@ defmodule Trnp.Selling do
 
   ## Api
 
-  def set_channel_id(id), do: Agent.cast(__MODULE__, fn state -> %{state | channel_id: id} end)
+  def set_channel_id(id), do: Agent.cast(__MODULE__, &%{&1 | channel_id: id})
 
-  def get_channel_id,
-    do: Agent.get(__MODULE__, fn %__MODULE__{channel_id: channel_id} -> channel_id end)
+  def get_channel_id, do: Agent.get(__MODULE__, & &1.channel_id)
 
   def clean_channel, do: Agent.cast(__MODULE__, &remake_channel/1)
 
   def get_history(id) do
-    Agent.get(__MODULE__, fn %__MODULE__{user_ids: user_ids} -> Map.get(user_ids, id, %{}) end)
+    Agent.get(__MODULE__, fn %__MODULE__{user_ids: user_ids} ->
+      Map.get(user_ids, id, @empty_list)
+    end)
   end
 
   def handle_message(%Message{
