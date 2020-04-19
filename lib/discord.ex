@@ -27,13 +27,17 @@ defmodule Discord do
       ),
       do: Commands.Admin.handle_command(command)
 
-  def handle_event(
-        {:MESSAGE_CREATE,
-         %Message{content: "!" <> command, author: %{id: user_id}, channel_id: channel_id},
-         _ws_state}
-      ),
-      do:
-        Commands.User.handle_command(%{command: command, user_id: user_id, channel_id: channel_id})
+  def handle_event({:MESSAGE_CREATE, %Message{content: "!" <> _command} = message, _ws_state}),
+    do: Commands.User.handle_command(message)
+
+  def handle_event({:MESSAGE_CREATE, %Message{channel_id: channel_id} = message, _ws_state}) do
+    selling_channel_id = Trnp.Selling.get_channel_id()
+
+    case channel_id do
+      ^selling_channel_id -> Trnp.Selling.handle_message(message)
+      _ -> nil
+    end
+  end
 
   # Fallthrough so it doesn't error
   def handle_event(_event), do: nil
