@@ -66,4 +66,11 @@ defmodule Database do
       )
     end)
   end
+
+  def reset_prices do
+    Agent.cast(__MODULE__, fn db ->
+      query!(db, "DELETE FROM prices")
+      db
+    end)
+  end
 end
