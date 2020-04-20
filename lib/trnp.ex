@@ -9,7 +9,6 @@ defmodule Trnp do
     children = [
       {Database, 'trnp.db'},
       Discord,
-      Trnp.Selling,
       Scheduler
     ]
 

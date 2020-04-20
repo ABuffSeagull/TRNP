@@ -3,7 +3,7 @@ defmodule Commands.User do
   alias Nostrum.Struct.Message
   alias Timex.Timezone
 
-  @empty_list Enum.map(0..6, fn _ -> nil end)
+  @empty_list Enum.map(0..11, fn _ -> nil end)
 
   def handle_command(%Message{
         content: "!timezone" <> timezone,
