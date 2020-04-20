@@ -39,4 +39,31 @@ defmodule Database do
       |> Keyword.get(:timezone, nil)
     end)
   end
+
+  def add_price(%{user_id: user_id, price: price, day: day, is_afternoon: is_afternoon}) do
+    Agent.cast(__MODULE__, fn db ->
+      query!(db, "INSERT INTO prices
+                  (price, day, is_afternoon, user_id) VALUES (?1, ?2, ?3, ?4)
+                  ON CONFLICT(day, is_afternoon, user_id) DO UPDATE SET price = ?1",
+        bind: [price, day, is_afternoon, user_id]
+      )
+
+      db
+    end)
+  end
+
+  def get_history(user_id) do
+    Agent.get(__MODULE__, fn db ->
+      query!(
+        db,
+        "SELECT
+          price,
+          day * 2 + is_afternoon as time_index
+        FROM prices
+        WHERE user_id = ? ORDER BY time_index DESC",
+        bind: [user_id],
+        into: %{}
+      )
+    end)
+  end
 end

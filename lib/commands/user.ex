@@ -3,6 +3,8 @@ defmodule Commands.User do
   alias Nostrum.Struct.Message
   alias Timex.Timezone
 
+  @empty_list Enum.map(0..6, fn _ -> nil end)
+
   def handle_command(%Message{
         content: "!timezone" <> timezone,
         author: %{id: user_id},
@@ -34,8 +36,8 @@ defmodule Commands.User do
         channel_id: channel_id
       }) do
     prices =
-      user_id
-      |> Trnp.Selling.get_history()
+      Database.get_history(user_id)
+      |> Enum.reduce(@empty_list, &List.insert_at(&2, &1.time_index, &1.price))
       |> Enum.map(&(&1 || "\\_"))
       |> Enum.join(", ")
 
