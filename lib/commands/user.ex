@@ -37,7 +37,7 @@ defmodule Commands.User do
       }) do
     prices =
       Database.get_history(user_id)
-      |> Enum.reduce(@empty_list, &List.insert_at(&2, &1.time_index, &1.price))
+      |> Enum.reduce(@empty_list, &List.update_at(&2, &1.time_index, fn _ -> &1.price end))
       |> Enum.map(&(&1 || "\\_"))
       |> Enum.join(", ")
 
