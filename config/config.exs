@@ -11,6 +11,11 @@ config :trnp, Scheduler,
       schedule: "@weekly",
       task: {Trnp.Selling, :clean_channel, []},
       timezone: "America/Los_Angeles"
+    ],
+    price_wipe: [
+      schedule: "@weekly",
+      task: {Database, :reset_prices, []},
+      timezone: "America/Los_Angeles"
     ]
   ]
 
