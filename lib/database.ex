@@ -16,6 +16,15 @@ defmodule Database do
     end)
   end
 
+  def get_channels do
+    Agent.get(__MODULE__, fn db ->
+      query!(db, "SELECT name, channel_id FROM channels")
+    end)
+    |> Enum.reduce(%{}, fn [name: name, channel_id: channel_id], acc ->
+      Map.put(acc, name, channel_id)
+    end)
+  end
+
   def set_channel_id(channel, id) do
     Agent.cast(__MODULE__, fn db ->
       query!(db, "UPDATE channels SET channel_id = ? WHERE name = ?", bind: [id, channel])
@@ -49,6 +58,12 @@ defmodule Database do
       )
 
       db
+    end)
+  end
+
+  def set_buying_price(user_id, price) do
+    Agent.cast(__MODULE__, fn db ->
+      query!(db, "UPDATE users SET base_price = ? WHERE id = ?", bind: [price, user_id])
     end)
   end
 

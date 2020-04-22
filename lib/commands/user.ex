@@ -44,6 +44,26 @@ defmodule Commands.User do
     Api.create_message!(channel_id, content: "<@!#{user_id}> Price History: #{prices}")
   end
 
+  def handle_command(%Message{
+        content: "!buying" <> price,
+        author: %{id: user_id},
+        channel_id: channel_id
+      }) do
+    price = String.trim(price)
+
+    message =
+      case Integer.parse(price) do
+        :error ->
+          "Unable to parse #{price}"
+
+        {num, _} ->
+          Database.set_buying_price(user_id, num)
+          "Set buying price to #{num}"
+      end
+
+    Api.create_message(channel_id, content: "<@!#{user_id}> #{message}")
+  end
+
   # Fallthrough
   def handle_command(_message), do: nil
 end
