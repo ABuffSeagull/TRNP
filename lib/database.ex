@@ -72,10 +72,12 @@ defmodule Database do
       query!(
         db,
         "SELECT
-          price,
-          day * 2 + is_afternoon as time_index
-        FROM prices
-        WHERE user_id = ? ORDER BY time_index DESC",
+          users.base_price,
+          prices.price,
+          prices.day * 2 + prices.is_afternoon as time_index
+        FROM users
+        JOIN prices ON users.id = prices.user_id
+        WHERE prices.user_id = ? ORDER BY time_index DESC",
         bind: [user_id],
         into: %{}
       )

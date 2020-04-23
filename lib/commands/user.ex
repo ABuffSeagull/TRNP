@@ -35,13 +35,18 @@ defmodule Commands.User do
         author: %{id: user_id},
         channel_id: channel_id
       }) do
+    prices = Database.get_history(user_id)
+    [%{base_price: base_price} | _] = prices
+
     prices =
       Database.get_history(user_id)
       |> Enum.reduce(@empty_list, &List.update_at(&2, &1.time_index, fn _ -> &1.price end))
       |> Enum.map(&(&1 || "\\_"))
       |> Enum.join(", ")
 
-    Api.create_message!(channel_id, content: "<@!#{user_id}> Price History: #{prices}")
+    Api.create_message!(channel_id,
+      content: "<@!#{user_id}> Buying Price: #{base_price || 'unknown'}, Price History: #{prices}"
+    )
   end
 
   def handle_command(%Message{
