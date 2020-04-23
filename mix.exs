@@ -4,7 +4,7 @@ defmodule Trnp.MixProject do
   def project do
     [
       app: :trnp,
-      version: "2.2.0",
+      version: "2.0.1",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps()
