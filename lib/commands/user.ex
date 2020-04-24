@@ -5,6 +5,7 @@ defmodule Commands.User do
 
   @empty_list Enum.map(0..11, fn _ -> nil end)
 
+  @spec handle_command(%Message{}) :: :ok
   def handle_command(%Message{
         content: "!timezone" <> timezone,
         author: %{id: user_id},
@@ -28,6 +29,7 @@ defmodule Commands.User do
       end
 
     Api.create_message!(channel_id, content: "<@!#{user_id}> #{message}")
+    :ok
   end
 
   def handle_command(%Message{
@@ -49,6 +51,8 @@ defmodule Commands.User do
       content:
         "<@!#{user_id}> Buying Price: #{base_price || 'unknown'}, Price History: #{price_string}"
     )
+
+    :ok
   end
 
   def handle_command(%Message{
@@ -69,8 +73,9 @@ defmodule Commands.User do
       end
 
     Api.create_message(channel_id, content: "<@!#{user_id}> #{message}")
+    :ok
   end
 
   # Fallthrough
-  def handle_command(_message), do: nil
+  def handle_command(_message), do: :ok
 end

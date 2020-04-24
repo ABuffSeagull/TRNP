@@ -10,6 +10,7 @@ defmodule Trnp.Selling do
   @guild_id Application.fetch_env!(:trnp, :guild_id)
   @channel_parent_id Application.fetch_env!(:trnp, :channel_parent_id)
 
+  @spec clean_channel() :: :ok
   def clean_channel do
     channel_id = Database.get_channel_id("selling")
     Api.delete_channel!(channel_id, "Weekly wipe")
@@ -21,8 +22,10 @@ defmodule Trnp.Selling do
       )
 
     Database.set_channel_id("selling", channel_id)
+    :ok
   end
 
+  @spec handle_message(%Message{}) :: :ok | nil
   def handle_message(%Message{
         content: content,
         author: %{id: user_id},
@@ -35,7 +38,7 @@ defmodule Trnp.Selling do
 
       [_full, bells] ->
         add_price(%{
-          price: bells,
+          price: String.to_integer(bells),
           user_id: user_id,
           timestamp: timestamp,
           message_id: message_id
@@ -43,6 +46,12 @@ defmodule Trnp.Selling do
     end
   end
 
+  @spec add_price(%{
+          user_id: pos_integer(),
+          price: pos_integer(),
+          timestamp: String.t(),
+          message_id: pos_integer
+        }) :: :ok
   defp add_price(%{
          user_id: user_id,
          price: price,
@@ -73,5 +82,7 @@ defmodule Trnp.Selling do
 
         Api.create_reaction!(channel_id, message_id, "✅")
     end
+
+    :ok
   end
 end

@@ -26,7 +26,7 @@ defmodule Trnp.MixProject do
       {:nostrum, "~> 0.4.1"},
       {:quantum, "~> 3.0.0-rc.3"},
       {:jason, "~> 1.2"},
-      {:sqlitex, "~> 1.7"},
+      {:sqlitex, path: "../sqlitex"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
