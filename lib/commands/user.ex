@@ -40,6 +40,7 @@ defmodule Commands.User do
 
     prices =
       Database.get_history(user_id)
+      |> Enum.filter(&is_number(&1.price))
       |> Enum.reduce(@empty_list, &List.update_at(&2, &1.time_index, fn _ -> &1.price end))
       |> Enum.map(&(&1 || "\\_"))
       |> Enum.join(", ")

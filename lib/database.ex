@@ -76,8 +76,8 @@ defmodule Database do
           prices.price,
           prices.day * 2 + prices.is_afternoon as time_index
         FROM users
-        JOIN prices ON users.id = prices.user_id
-        WHERE prices.user_id = ? ORDER BY time_index DESC",
+        LEFT JOIN prices ON users.id = prices.user_id
+        WHERE users.id = ? ORDER BY time_index DESC",
         bind: [user_id],
         into: %{}
       )
