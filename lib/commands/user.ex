@@ -38,15 +38,16 @@ defmodule Commands.User do
     prices = Database.get_history(user_id)
     [%{base_price: base_price} | _] = prices
 
-    prices =
-      Database.get_history(user_id)
+    price_string =
+      prices
       |> Enum.filter(&is_number(&1.price))
       |> Enum.reduce(@empty_list, &List.update_at(&2, &1.time_index, fn _ -> &1.price end))
       |> Enum.map(&(&1 || "\\_"))
       |> Enum.join(", ")
 
     Api.create_message!(channel_id,
-      content: "<@!#{user_id}> Buying Price: #{base_price || 'unknown'}, Price History: #{prices}"
+      content:
+        "<@!#{user_id}> Buying Price: #{base_price || 'unknown'}, Price History: #{price_string}"
     )
   end
 
