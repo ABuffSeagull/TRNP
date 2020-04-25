@@ -1,5 +1,5 @@
 defmodule Trnp.Patterns.Random do
-  @spec get_intervals() :: [
+  @spec generate_intervals() :: [
           [
             increasing: non_neg_integer(),
             decreasing: 2 | 3,
@@ -8,7 +8,7 @@ defmodule Trnp.Patterns.Random do
             increasing: non_neg_integer()
           ]
         ]
-  def get_intervals do
+  def generate_intervals do
     # Note: we build the intervals backwards
     0..6
     # Add first increase
@@ -34,7 +34,7 @@ defmodule Trnp.Patterns.Random do
 
   @spec calculate_ranges(pos_integer()) :: [[Range.t()]]
   def calculate_ranges(base_price) do
-    get_intervals()
+    generate_intervals()
     |> Enum.map(
       # Replace each :increasing/:decreasing with actual ranges
       &Enum.flat_map(&1, fn {type, count} -> apply(__MODULE__, type, [count, base_price]) end)
