@@ -107,6 +107,7 @@ defmodule Database do
   @spec reset_prices() :: :ok
   def reset_prices do
     Agent.cast(__MODULE__, fn db ->
+      query!(db, "UPDATE users SET base_price = NULL")
       query!(db, "DELETE FROM prices")
       db
     end)
