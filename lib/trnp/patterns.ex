@@ -3,7 +3,9 @@ defmodule Trnp.Patterns do
 
   @patterns %{
     random: &Trnp.Patterns.Random.calculate_ranges/1,
-    large_spike: &Trnp.Patterns.LargeSpike.calculate_ranges/1
+    large_spike: &Trnp.Patterns.LargeSpike.calculate_ranges/1,
+    decreasing: &Trnp.Patterns.Decreasing.calculate_ranges/1,
+    small_spike: &Trnp.Patterns.SmallSpike.calculate_ranges/1
   }
 
   def match(base_price, prices) do

@@ -37,18 +37,17 @@ defmodule Trnp.Patterns.Random do
     generate_intervals()
     |> Enum.map(
       # Replace each :increasing/:decreasing with actual ranges
-      &Enum.flat_map(&1, fn {type, count} -> apply(__MODULE__, type, [count, base_price]) end)
+      &Enum.flat_map(&1, fn
+        {:increasing, count} ->
+          List.duplicate(bell_range(base_price, 0.9, 1.4), count)
+
+        {:decreasing, count} ->
+          0..(count - 1)
+          # Find min and max percentages for each day
+          |> Enum.map(fn day -> {0.6 - 0.1 * day, 0.8 - 0.04 * day} end)
+          |> Enum.map(fn {min, max} -> bell_range(base_price, min, max) end)
+      end)
     )
-  end
-
-  def increasing(count, base_price),
-    do: List.duplicate(bell_range(base_price, 0.9, 1.4), count)
-
-  def decreasing(count, base_price) do
-    0..(count - 1)
-    # Find min and max percentages for each day
-    |> Enum.map(&{0.6 - 0.1 * &1, 0.8 - 0.04 * &1})
-    |> Enum.map(fn {min, max} -> bell_range(base_price, min, max) end)
   end
 
   defp bell_range(base_price, lower_ratio, upper_ratio) do
