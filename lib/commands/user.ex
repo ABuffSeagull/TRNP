@@ -3,7 +3,15 @@ defmodule Commands.User do
   alias Nostrum.Struct.Message
   alias Timex.Timezone
 
+  require Logger
+
   @empty_list Enum.map(0..11, fn _ -> nil end)
+  @pattern_names %{
+    large_spike: "Large Spike",
+    small_spike: "Small Spike",
+    decreasing: "Decreasing",
+    random: "Fluctuating"
+  }
 
   @spec handle_command(%Message{}) :: :ok
   def handle_command(%Message{
@@ -11,6 +19,7 @@ defmodule Commands.User do
         author: %{id: user_id},
         channel_id: channel_id
       }) do
+    Logger.debug("Handling command timezone for #{user_id} in #{channel_id}")
     timezone = String.trim(timezone)
 
     message =
@@ -37,7 +46,8 @@ defmodule Commands.User do
         author: %{id: user_id},
         channel_id: channel_id
       }) do
-    prices = Database.get_history(user_id)
+    Logger.debug("Handling command history for #{user_id} in #{channel_id}")
+    prices = Database.get_price_info(user_id)
     [%{base_price: base_price} | _] = prices
 
     price_string =
@@ -74,6 +84,31 @@ defmodule Commands.User do
 
     Api.create_message(channel_id, content: "<@!#{user_id}> #{message}")
     :ok
+  end
+
+  def handle_command(%Message{
+        content: "!pattern" <> _extra,
+        author: %{id: user_id},
+        channel_id: channel_id
+      }) do
+    prices = Database.get_price_info(user_id)
+    [%{base_price: base_price, last_pattern: last_pattern} | _] = prices
+
+    pattern_chances =
+      prices
+      |> Enum.filter(&is_number(&1.price))
+      |> Enum.reduce(@empty_list, &List.update_at(&2, &1.time_index, fn _ -> &1.price end))
+      |> Trnp.Patterns.match(base_price, last_pattern)
+      |> Enum.group_by(fn {type, _, _} -> type end, fn {_, _, weight} -> weight end)
+      |> Enum.map(fn {type, weights} -> {type, Enum.sum(weights)} end)
+      |> Enum.filter(fn {_type, weight} -> weight > 0.001 end)
+      |> Enum.map(fn {type, weight} -> {@pattern_names[type], round(weight * 100)} end)
+      |> Enum.sort_by(fn {_type, weight} -> weight end)
+      |> Enum.reverse()
+      |> Enum.map(fn {type, weight} -> "#{type}: #{weight}%" end)
+      |> Enum.join(", ")
+
+    Api.create_message(channel_id, content: "<@!#{user_id}> #{pattern_chances}")
   end
 
   # Fallthrough

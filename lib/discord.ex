@@ -33,6 +33,7 @@ defmodule Discord do
 
   # Handle general messages
   def handle_event({:MESSAGE_CREATE, %Message{channel_id: channel_id} = message, _ws_state}) do
+    Logger.debug(channel_id, label: "Handle message channel_id")
     %{"buying" => buying_channel_id, "selling" => selling_channel_id} = Database.get_channels()
 
     case channel_id do

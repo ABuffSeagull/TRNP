@@ -80,19 +80,21 @@ defmodule Database do
     end)
   end
 
-  @spec get_history(pos_integer()) :: [
+  @spec get_price_info(pos_integer()) :: [
           %{
             base_price: pos_integer() | nil,
             price: pos_integer() | nil,
-            time_index: pos_integer() | nil
+            time_index: pos_integer() | nil,
+            last_pattern: String.t() | nil
           }
         ]
-  def get_history(user_id) do
+  def get_price_info(user_id) do
     Agent.get(__MODULE__, fn db ->
       query!(
         db,
         "SELECT
           users.base_price,
+          users.last_pattern,
           prices.price,
           prices.day * 2 + prices.is_afternoon as time_index
         FROM users
