@@ -44,18 +44,24 @@ defmodule Trnp.Patterns do
           {pattern_type(), float()}
         ]
   def get_new_weights(counts, last_pattern) do
-    if is_nil(last_pattern) do
-      [random: 0.25, large_spike: 0.25, decreasing: 0.25, small_spike: 0.25]
-    else
-      last_pattern = String.to_atom(last_pattern)
+    weights =
+      if is_nil(last_pattern) do
+        %{random: 0.25, large_spike: 0.25, decreasing: 0.25, small_spike: 0.25}
+      else
+        @weights[String.to_atom(last_pattern)]
+      end
 
-      added_weight =
-        Enum.filter(counts, fn {_type, count} -> count == 0 end)
-        |> Keyword.keys()
-        |> Enum.map(&Map.fetch!(@weights[last_pattern], &1))
-        |> Enum.sum()
+    empty_weights =
+      Enum.filter(counts, fn {_type, count} -> count == 0 end)
+      |> Keyword.keys()
+      |> Enum.map(&Map.fetch!(weights, &1))
 
-      Enum.map(@weights[last_pattern], fn {type, weight} -> {type, weight + added_weight} end)
-    end
+    added_weight =
+      empty_weights
+      |> Enum.sum()
+
+    Enum.map(weights, fn {type, weight} ->
+      {type, weight + added_weight / length(empty_weights)}
+    end)
   end
 end
