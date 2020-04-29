@@ -61,7 +61,7 @@ defmodule Trnp.Patterns do
       |> Enum.sum()
 
     Enum.map(weights, fn {type, weight} ->
-      {type, weight + added_weight / length(empty_weights)}
+      {type, weight + added_weight / (4 - length(empty_weights))}
     end)
   end
 end
