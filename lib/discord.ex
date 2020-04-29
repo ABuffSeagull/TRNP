@@ -22,13 +22,13 @@ defmodule Discord do
 
   # Handle Admin commands
   def handle_event(
-        {:MESSAGE_CREATE, %Message{channel_id: @admin_channel_id, content: "!" <> command},
+        {:MESSAGE_CREATE, %Message{channel_id: @admin_channel_id, content: "$" <> command},
          _ws_state}
       ),
       do: Commands.Admin.handle_command(command)
 
   # Handle User commands
-  def handle_event({:MESSAGE_CREATE, %Message{content: "!" <> _command} = message, _ws_state}),
+  def handle_event({:MESSAGE_CREATE, %Message{content: "$" <> _command} = message, _ws_state}),
     do: Commands.User.handle_command(message)
 
   # Handle general messages

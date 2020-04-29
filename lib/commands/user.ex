@@ -15,7 +15,7 @@ defmodule Commands.User do
 
   @spec handle_command(%Message{}) :: :ok
   def handle_command(%Message{
-        content: "!timezone" <> timezone,
+        content: "$timezone" <> timezone,
         author: %{id: user_id},
         channel_id: channel_id
       }) do
@@ -42,7 +42,7 @@ defmodule Commands.User do
   end
 
   def handle_command(%Message{
-        content: "!history" <> _extra,
+        content: "$history" <> _extra,
         author: %{id: user_id},
         channel_id: channel_id
       }) do
@@ -66,7 +66,7 @@ defmodule Commands.User do
   end
 
   def handle_command(%Message{
-        content: "!buying" <> price,
+        content: "$buying" <> price,
         author: %{id: user_id},
         channel_id: channel_id
       }) do
@@ -87,7 +87,7 @@ defmodule Commands.User do
   end
 
   def handle_command(%Message{
-        content: "!pattern" <> _extra,
+        content: "$pattern" <> _extra,
         author: %{id: user_id},
         channel_id: channel_id
       }) do
