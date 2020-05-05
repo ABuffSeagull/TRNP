@@ -33,7 +33,6 @@ defmodule Discord do
 
   # Handle general messages
   def handle_event({:MESSAGE_CREATE, %Message{channel_id: channel_id} = message, _ws_state}) do
-    Logger.debug(channel_id, label: "Handle message channel_id")
     %{"buying" => buying_channel_id, "selling" => selling_channel_id} = Database.get_channels()
 
     case channel_id do
@@ -44,5 +43,7 @@ defmodule Discord do
   end
 
   # Fallthrough so it doesn't error
-  def handle_event(_event), do: nil
+  def handle_event(event) do
+    # IO.inspect(event, label: "unhandled event", pretty: true)
+  end
 end

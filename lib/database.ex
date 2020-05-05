@@ -58,15 +58,14 @@ defmodule Database do
   @spec add_price(%{
           user_id: pos_integer(),
           price: pos_integer(),
-          day: pos_integer(),
-          is_afternoon: bool()
+          time_index: non_neg_integer()
         }) :: :ok
-  def add_price(%{user_id: user_id, price: price, day: day, is_afternoon: is_afternoon}) do
+  def add_price(%{user_id: user_id, price: price, time_index: time_index}) do
     Agent.cast(__MODULE__, fn db ->
       query!(db, "INSERT INTO prices
-                  (price, day, is_afternoon, user_id) VALUES (?1, ?2, ?3, ?4)
-                  ON CONFLICT(day, is_afternoon, user_id) DO UPDATE SET price = ?1",
-        bind: [price, day, is_afternoon, user_id]
+                  (price, time_index, user_id) VALUES (?1, ?2, ?3)
+                  ON CONFLICT(time_index, user_id) DO UPDATE SET price = ?1",
+        bind: [price, time_index, user_id]
       )
 
       db
@@ -96,7 +95,7 @@ defmodule Database do
           users.base_price,
           users.last_pattern,
           prices.price,
-          prices.day * 2 + prices.is_afternoon as time_index
+          prices.time_index
         FROM users
         LEFT JOIN prices ON users.id = prices.user_id
         WHERE users.id = ? ORDER BY time_index DESC",

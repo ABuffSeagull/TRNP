@@ -76,8 +76,7 @@ defmodule Trnp.Selling do
         Database.add_price(%{
           user_id: user_id,
           price: price,
-          day: Timex.weekday(datetime) - 1,
-          is_afternoon: datetime.hour >= 12
+          time_index: (Timex.weekday(datetime) - 1) * 2 + if(datetime.hour >= 12, do: 1, else: 0)
         })
 
         Api.create_reaction!(channel_id, message_id, "✅")
