@@ -27,7 +27,7 @@ defmodule Trnp.Patterns.Random do
       )
     end)
     # Add second decrease
-    |> Enum.map(&List.insert_at(&1, 1, {:decreasing, 5 - Keyword.fetch!(&1, :decreasing)}))
+    |> Enum.map(&List.insert_at(&1, 1, {:decreasing, 5 - &1[:decreasing]}))
     # Reverse it, since we built it backwards
     |> Enum.map(&Enum.reverse/1)
   end

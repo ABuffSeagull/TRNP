@@ -34,7 +34,7 @@ defmodule Trnp.Patterns do
     new_weights = get_new_weights(counts, last_pattern)
 
     Enum.flat_map(patterns_map, fn {type, patterns} ->
-      Enum.map(patterns, &{type, &1, new_weights[type] / Keyword.fetch!(counts, type)})
+      Enum.map(patterns, &{type, &1, new_weights[type] / counts[type]})
     end)
     |> Enum.sort_by(&elem(&1, 2))
     |> Enum.reverse()
