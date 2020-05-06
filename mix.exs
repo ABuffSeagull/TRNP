@@ -15,14 +15,14 @@ defmodule Trnp.MixProject do
   def application do
     [
       mod: {Trnp, []},
-      extra_applications: [:logger, :timex]
+      extra_applications: [:logger]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:timex, "~> 3.6"},
+      {:tzdata, "~> 1.0"},
       {:nostrum, "~> 0.4.1"},
       {:quantum, "~> 3.0.0-rc.3"},
       {:jason, "~> 1.2"},

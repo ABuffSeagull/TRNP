@@ -1,6 +1,4 @@
 defmodule Trnp.Selling do
-  use Timex
-
   require Logger
 
   alias Nostrum.Api
@@ -68,15 +66,14 @@ defmodule Trnp.Selling do
         )
 
       timezone ->
-        datetime =
-          timestamp
-          |> Timex.parse!("{ISO:Extended}")
-          |> Timezone.convert(timezone)
+        {:ok, datetime, 0} = DateTime.from_iso8601(timestamp)
+        {:ok, datetime} = DateTime.shift_zone(datetime, timezone)
 
         Database.add_price(%{
           user_id: user_id,
           price: price,
-          time_index: (Timex.weekday(datetime) - 1) * 2 + if(datetime.hour >= 12, do: 1, else: 0)
+          time_index:
+            (Date.day_of_week(datetime) - 1) * 2 + if(datetime.hour >= 12, do: 1, else: 0)
         })
 
         Api.create_reaction!(channel_id, message_id, "✅")

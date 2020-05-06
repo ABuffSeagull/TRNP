@@ -1,7 +1,6 @@
 defmodule Commands.User do
   alias Nostrum.Api
   alias Nostrum.Struct.Message
-  alias Timex.Timezone
 
   require Logger
 
@@ -24,7 +23,7 @@ defmodule Commands.User do
 
     message =
       if String.length(timezone) > 0 do
-        if Timezone.exists?(timezone) do
+        if Tzdata.zone_exists?(timezone) do
           Database.set_user_timezone(user_id, timezone)
           "Timezone has been set to #{timezone}"
         else
