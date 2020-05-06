@@ -64,7 +64,7 @@ defmodule Trnp.Selling do
       nil ->
         Api.create_message(
           channel_id,
-          content: "<@!#{user_id}> You haven't set your timezone yet. Use !timezone <timezone>"
+          content: "<@!#{user_id}> You haven't set your timezone yet. Use $timezone <timezone>"
         )
 
       timezone ->
